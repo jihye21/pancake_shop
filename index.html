@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🥞 pancake</title>
 
 <style>
@@ -77,12 +78,18 @@ button {
 <audio id="perfectSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
 <canvas id="game" width="300" height="300"></canvas><br>
-<button class="flip-btn" onclick="flip()">🥞 뒤집기</button>
+<div id="ui">
+  <button id="startBtn" onclick="startGame()" class="flip-btn">🥞 팬케이크 굽기</button>
+  <button id="flipBtn" onclick="flip()" style="display:none;" class="flip-btn">뒤집기!</button>
+  <button id="retryBtn" onclick="resetGame()" style="display:none;" class="flip-btn">🔁 다시 굽기</button>
+</div>
 
 <p id="result"></p>
 <p id="bestScore">최고 점수: 0.0</p>
 
 <script>
+let gameState = "start";
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -187,7 +194,47 @@ function scoreByDistance(v, p, r) {
   return Math.max(0, 1 - Math.abs(v - p) / r);
 }
 
-function gameLoop() {
+function startGame() {
+ gameState = "playing";
+
+ time = 0;
+ flipped = false;
+ flipping = false;
+ flipProgress = 0;
+ flippedSide = false;
+ scored = false;
+
+ document.getElementById("startBtn").style.display = "none";
+ document.getElementById("flipBtn").style.display = "inline-block";
+ document.getElementById("retryBtn").style.display = "none";
+
+  loop();
+}
+
+function resetGame() {
+  gameState = "start";
+
+  time = 0;
+  flipped = false;
+  flipping = false;
+  flipProgress = 0;
+  flippedSide = false;
+  scored = false;
+
+  document.getElementById("result").innerText = "";
+
+  document.getElementById("startBtn").style.display = "none";
+
+  const flipBtn = document.getElementById("flipBtn");
+  flipBtn.disabled=false;
+  flipBtn.style.display="inline-block";
+
+  document.getElementById("retryBtn").style.display = "none";
+  
+  startGame();
+ }
+
+function loop() {
   ctx.clearRect(0, 0, 300, 300);
 
   let front = getColor(time);
@@ -229,7 +276,7 @@ function gameLoop() {
   }
 
   if (!flipped || flipping) {
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(loop);
   }
 
   if (flipped && !flipping && !scored) {
@@ -247,12 +294,15 @@ function gameLoop() {
     score = Math.round(score * 10) / 10;
 
     let text = "";
-    if (score > 95) text = "👑 신의 팬케이크";
-    else if (score > 85) text = "🔥 거의 완벽!";
-    else if (score > 70) text = "😋 맛있다";
-    else if (score > 50) text = "🙂 먹을만함";
-    else if (score > 30) text = "😐 애매함";
-    else text = "💀 실패";
+    if (score > 95) {text = "👑 신의 팬케이크";
+      document.getElementById("perfectSound").currentTime=0;
+      document.getElementById("perfectSound").play();
+    }
+    else if (score > 85) {text = "🔥 거의 완벽!";}
+    else if (score > 70) {text = "😋 맛있다";}
+    else if (score > 50) {text = "🙂 먹을만함";}
+    else if (score > 30) {text = "😐 애매함";}
+    else {text = "💀 실패";}
 
     document.getElementById("result").innerText =
       `점수: ${score} / 100\n${text}`;
@@ -264,18 +314,24 @@ function gameLoop() {
       document.getElementById("bestScore").innerText =
         `최고 점수: ${bestScore.toFixed(1)} 🔥`;
     }
+
+    gameState = "result";
+
+    document.getElementById("flipBtn").style.display = "none";
+    document.getElementById("retryBtn").style.display = "inline-block";
   }
 }
 
 function flip() {
+  if (gameState !== "playing") return;
   if (flipped) return;
 
   flipped = true;
   flipping = true;
-  flipProgress = 0;
+
+  document.getElementById("flipBtn").disabled = true;
 }
 
-gameLoop();
 </script>
 
 </body>
