@@ -121,6 +121,50 @@ let batter = Math.random();
 let water = Math.random();
 let heat = 0.5 + Math.random();
 
+function startGame() {
+ gameState = "playing";
+
+ time = 0;
+ flipped = false;
+ flipping = false;
+ flipProgress = 0;
+ flippedSide = false;
+ scored = false;
+
+ document.getElementById("startBtn").style.display = "none";
+ document.getElementById("flipBtn").style.display = "inline-block";
+ document.getElementById("retryBtn").style.display = "none";
+
+  loop();
+}
+
+function resetGame() {
+  gameState = "start";
+
+  time = 0;
+  flipped = false;
+  flipping = false;
+  flipProgress = 0;
+  flippedSide = false;
+  scored = false;
+
+  batter = Math.random();
+  water = Math.random();
+  heat = 0.5 + Math.random();
+
+  document.getElementById("result").innerText = "";
+
+  document.getElementById("startBtn").style.display = "none";
+
+  const flipBtn = document.getElementById("flipBtn");
+  flipBtn.disabled=false;
+  flipBtn.style.display="inline-block";
+
+  document.getElementById("retryBtn").style.display = "none";
+  
+  startGame();
+ }
+ 
 function lerpColor(a, b, t) {
   const ar = parseInt(a.substr(1,2),16);
   const ag = parseInt(a.substr(3,2),16);
@@ -284,50 +328,6 @@ function drawPancake(color, scaleY = 1) {
 function scoreByDistance(v, p, r) {
   return Math.max(0, 1 - Math.abs(v - p) / r);
 }
-
-function startGame() {
- gameState = "playing";
-
- time = 0;
- flipped = false;
- flipping = false;
- flipProgress = 0;
- flippedSide = false;
- scored = false;
-
- document.getElementById("startBtn").style.display = "none";
- document.getElementById("flipBtn").style.display = "inline-block";
- document.getElementById("retryBtn").style.display = "none";
-
-  loop();
-}
-
-function resetGame() {
-  gameState = "start";
-
-  time = 0;
-  flipped = false;
-  flipping = false;
-  flipProgress = 0;
-  flippedSide = false;
-  scored = false;
-
-  batter = Math.random();
-  water = Math.random();
-  heat = 0.5 + Math.random();
-
-  document.getElementById("result").innerText = "";
-
-  document.getElementById("startBtn").style.display = "none";
-
-  const flipBtn = document.getElementById("flipBtn");
-  flipBtn.disabled=false;
-  flipBtn.style.display="inline-block";
-
-  document.getElementById("retryBtn").style.display = "none";
-  
-  startGame();
- }
 
 function loop() {
   ctx.clearRect(0, 0, 300, 300);
