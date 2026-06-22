@@ -151,41 +151,132 @@ function getColor(progress) {
 }
 
 function drawPancake(color, scaleY = 1) {
-  let lift = flipping ? Math.sin(flipProgress * Math.PI) * 40 : 0;
-
+  let lift = flipping ? Math.sin(flipProgress * Math.PI) * 60 : 0;
   let wobbleX = 0;
   let tilt = 0;
 
   if (flipping && flipProgress < 0.3) {
     let t = flipProgress / 0.3;
-    wobbleX = Math.sin(t * Math.PI * 4) * 10 * (1 - t);
-    tilt = Math.sin(t * Math.PI * 2) * 0.2;
+    wobbleX = Math.sin(t * Math.PI * 4) * 6 * (1 - t);
+    tilt = Math.sin(t * Math.PI * 2) * 0.1;
   }
 
-  let squash = bouncing ? 1 - bounce * 0.3 : 1;
-
-  ctx.clearRect(0, 0, 300, 300);
+  let squash = bouncing ? 1 - bounce * 0.2 : 1;
+  let souffle = 1 + Math.sin(time * 2) * 0.02;
 
   ctx.save();
   ctx.translate(150 + wobbleX, 150 - lift - bounceY);
-  ctx.scale(1, scaleY * squash);
 
-  let rotation = flipping ? flipProgress * Math.PI : 0;
-  ctx.rotate(rotation + tilt);
+  ctx.scale(1, scaleY * squash * souffle);
+  ctx.rotate(tilt);
 
-  // 팬케이크
-  ctx.beginPath();
-  ctx.arc(0, 0, 80, 0, Math.PI * 2);
+  //뒤집기 보정
+  let signY = Math.sign(scaleY) || 1;
+
+  //자연스러운 굴곡
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  // ==========================================
+  // 팬케이크 전체 두께
+  // ==========================================
   ctx.fillStyle = color;
-  ctx.fill();
 
-  // 얼룩
-  for (let s of spots) {
+  if(signY === 1){
+    // 바닥 반죽
     ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    ctx.ellipse(-2, 8 * signY, 81, 56, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 오른쪽 바닥 반죽
+    ctx.beginPath();
+    ctx.ellipse(2, 6 * signY, 80, 57, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    // 바닥 반죽
+    ctx.beginPath();
+    ctx.ellipse(2, 8 * signY, 81, 56, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 오른쪽 바닥 반죽
+    ctx.beginPath();
+    ctx.ellipse(-2, 6 * signY, 80, 57, 0, 0, Math.PI * 2);
     ctx.fill();
   }
+  
+  // 옆면
+  ctx.save();
+  let sideLightGrad = ctx.createLinearGradient(0, -10 * signY, 0, 64 * signY);
+  sideLightGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
+  sideLightGrad.addColorStop(0.6, "rgba(255, 255, 255, 0.35)"); 
+  ctx.fillStyle = sideLightGrad;
+  ctx.fill();
+
+  // 그림자
+  let sideShadowGrad = ctx.createLinearGradient(0, 35 * signY, 0, 64 * signY);
+  sideShadowGrad.addColorStop(0, "rgba(0, 0, 0, 0)");
+  sideShadowGrad.addColorStop(1, "rgba(0, 0, 0, 0.15)");
+  ctx.fillStyle = sideShadowGrad;
+  ctx.fill();
+  ctx.restore();
+
+  // ==========================================
+  // 자연스러운 굴곡
+  // ==========================================
+  ctx.save();
+
+  ctx.fillStyle = color;
+
+  let steps = 3;
+  for (let i = 1; i < steps; i++) {
+    let ratio = i / steps;
+    let midY = (6 * signY) * (1 - ratio); 
+    let midX = (-2 * signY) * (1 - ratio); 
+    
+    ctx.beginPath();
+    ctx.ellipse(midX, midY, 81, 53 + (3 * (1 - ratio)), 0.05 * signY * ratio, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 외곽 모서리에 입체 입체감
+  ctx.globalCompositeOperation = "multiply";
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 81, 53, 0.05 * signY, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // 모서리 하이라이트
+  ctx.save();
+  ctx.globalCompositeOperation = "overlay";
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+
+  ctx.ellipse(0, 0, 80, 52, 0.05 * signY, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // ==========================================
+  // 팬케이크 윗면 
+  // ==========================================
+  
+  ctx.beginPath();
+  
+  ctx.ellipse(0, 0, 81, 53, 0.05 * signY, 0, Math.PI * 2);
+  ctx.fillStyle = color; 
+  ctx.fill();
+
+  // 중앙 하이라이트
+  ctx.save();
+  ctx.globalCompositeOperation = "overlay";
+  let cakeGrad = ctx.createRadialGradient(-8 * signY, -5 * signY, 8, 0, 0, 75);
+  cakeGrad.addColorStop(0, "rgba(255, 248, 220, 0.45)"); 
+  cakeGrad.addColorStop(0.7, "rgba(255, 255, 255, 0)");
+  ctx.fillStyle = cakeGrad;
+  ctx.fill();
+  ctx.restore();
 
   ctx.restore();
 }
@@ -246,11 +337,11 @@ function loop() {
   }
 
   if (flipping) {
-    flipProgress += 0.08;
+    flipProgress += 0.05;
 
     let scaleY = Math.cos(flipProgress * Math.PI);
 
-    if (flipProgress > 0.5 && !flippedSide) {
+    if (flipProgress > 0.5) {
       flippedSide = true;
     }
 
@@ -258,9 +349,10 @@ function loop() {
       flipping = false;
       bouncing = true;
       bounce = 1;
+      flipProgress = 0;
     }
 
-    drawPancake(color, Math.abs(scaleY));
+    drawPancake(color, scaleY);
   } else {
     drawPancake(color, 1);
   }
