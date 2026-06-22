@@ -117,9 +117,9 @@ for (let i = 0; i < 8; i++) {
   });
 }
 
-const batter = Math.random();
-const water = Math.random();
-const heat = 0.5 + Math.random();
+let batter = Math.random();
+let water = Math.random();
+let heat = 0.5 + Math.random();
 
 function lerpColor(a, b, t) {
   const ar = parseInt(a.substr(1,2),16);
@@ -311,6 +311,10 @@ function resetGame() {
   flipProgress = 0;
   flippedSide = false;
   scored = false;
+
+  batter = Math.random();
+  water = Math.random();
+  heat = 0.5 + Math.random();
 
   document.getElementById("result").innerText = "";
 
