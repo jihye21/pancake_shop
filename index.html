@@ -7,85 +7,231 @@
 
 <style>
 body {
-  background: #222;
-  color: white;
+  background: radial-gradient(circle at center, #2c2520 0%, #1a1512 100%);
+  color: #f7f5f0;
   text-align: center;
-  font-family: sans-serif;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
+.game-container {
+  max-width: 360px;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin: 0 0 5px 0;
+  letter-spacing: -1px;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+p {
+  color: #baaf9e;
+  font-size: 1rem;
+  margin: 0 0 15px 0;
+}
+
+/* 캔버스 */
 canvas {
-  background: #333;
+  background: #292522;
+  border: 4px solid #3e3530;
+  border-radius: 24px;
+  box-shadow: 
+    inset 0 4px 20px rgba(0,0,0,0.6),
+    0 15px 35px rgba(0,0,0,0.5);
+}
+
+.game-container {
+  position: relative;
+  max-width: 360px;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 40px;
+}
+
+.game-container::after {
+  content: '';
+  position: absolute;
+  
+  top: 365px; 
+  left: 50%;
+  transform: translateX(-50%);
+  
+  width: 28px;
+  height: 60px;
+  background: linear-gradient(to right, #2b2520, #1a1512);
+  border: 4px solid #3e3530;
+  border-radius: 0 0 12px 12px;
+  
+  z-index: -1; 
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+/* UI */
+#ui {
   margin-top: 20px;
-  border-radius: 10px;
+  height: 65px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-button {
-  margin-top: 20px;
-  padding: 15px 30px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-@keyframes flash {
-  0% { background: #222; }
-  50% { background: #fff176; }
-  100% { background: #222; }
-}
-
-.perfect {
-  animation: flash 0.5s ease;
-}
-
+/* 플립 버튼 */
 .flip-btn {
-  margin-top: 20px;
-  padding: 14px 34px;
-  font-size: 18px;
-  font-weight: bold;
+  padding: 14px 40px;
+  font-size: 1.2rem;
+  font-weight: 800;
   color: #2b1a0f;
-
-  background: linear-gradient(145deg, #ffd38a, #ffb347);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(145deg, #ffe29d, #ff9f1a);
   border: none;
-  border-radius: 14px;
-
+  border-radius: 50px;
   box-shadow:
-    0 6px 0 #c97a1a,
-    0 10px 20px rgba(0,0,0,0.4);
-
+    0 6px 0 #bc6600,
+    0 12px 20px rgba(255, 159, 26, 0.25);
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .flip-btn:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 8px 0 #c97a1a,
-    0 14px 24px rgba(0,0,0,0.45);
+    0 8px 0 #bc6600,
+    0 16px 24px rgba(255, 159, 26, 0.35);
 }
 
 .flip-btn:active {
   transform: translateY(4px);
   box-shadow:
-    0 2px 0 #c97a1a,
-    0 6px 12px rgba(0,0,0,0.35);
+    0 2px 0 #bc6600,
+    0 4px 8px rgba(0,0,0,0.4);
 }
+
+/* 결과창 */
+#result-container {
+  margin-top: 15px;
+  height: 95px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+#result-rating {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+#result-score {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+/* 게이지 */
+.score-bar-bg {
+  width: 180px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#score-bar-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.8s cubic-bezier(0.1, 1, 0.1, 1);
+}
+
+/* 최고 점수 */
+#bestScore {
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 18px;
+  border-radius: 30px;
+  color: #a89e8d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 15px;
+}
+
+/* 등급별 효과 */
+.grade-godly { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); animation: shake 0.5s infinite; }
+.grade-perfect { color: #ff9f1a; text-shadow: 0 0 10px rgba(255, 159, 26, 0.5); }
+.grade-delicious { color: #4caf50; }
+.grade-good { color: #2196f3; }
+.grade-meh { color: #9e9e9e; }
+.grade-burnt { color: #721c24; animation: opacityPulse 1s infinite; }
+
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, -1px); }
+}
+@keyframes opacityPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+@keyframes flash {
+  0% { background: #2c2520; }
+  50% { background: #ffeb3b; }
+  100% { background: #2c2520; }
+}
+.perfect { animation: flash 0.6s ease; }
 </style>
 </head>
 
 <body>
 
-<h1>🥞 팬케이크</h1>
+<main class="game-container">
+  <h1>🥞 pancake</h1>
+  <p>Perfect timing only.</p>
 
-<audio id="perfectSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="sizzleSound" src="https://actions.google.com/sounds/v1/substances/sizzling_pan.ogg" loop></audio>
+  <audio id="perfectSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
-<canvas id="game" width="300" height="300"></canvas><br>
-<div id="ui">
-  <button id="startBtn" onclick="startGame()" class="flip-btn">🥞 팬케이크 굽기</button>
-  <button id="flipBtn" onclick="flip()" style="display:none;" class="flip-btn">뒤집기!</button>
-  <button id="retryBtn" onclick="resetGame()" style="display:none;" class="flip-btn">🔁 다시 굽기</button>
-</div>
+  <canvas id="game" width="300" height="300"></canvas>
+  
+  <div id="ui">
+    <button id="startBtn" onclick="startGame()" class="flip-btn">🥞 COOK</button>
+    <button id="flipBtn" onclick="flip()" style="display:none;" class="flip-btn">Flip</button>
+    <button id="retryBtn" onclick="resetGame()" style="display:none;" class="flip-btn">Retry</button>
+  </div>
 
-<p id="result"></p>
-<p id="bestScore">최고 점수: 0.0</p>
+  <div id="result-container" style="visibility: hidden;">
+    <div id="result-rating">👑 GODLY PANCAKE</div>
+    <div id="result-score">Score: 0 / 100</div>
+    <div class="score-bar-bg">
+      <div id="score-bar-fill"></div>
+    </div>
+  </div>
+
+  <p id="result" style="display:none;"></p>
+  
+  <p id="bestScore">Best Score: 0.0</p>
+</main>
 
 <script>
 let gameState = "start";
@@ -95,7 +241,7 @@ const ctx = canvas.getContext("2d");
 
 let bestScore = parseFloat(localStorage.getItem("pancakeBest") || 0);
 document.getElementById("bestScore").innerText =
-  `최고 점수: ${bestScore.toFixed(1)}`;
+  `Best Score: ${bestScore.toFixed(1)}`;
 
 let time = 0;
 let flipped = false;
@@ -109,13 +255,18 @@ let bounceY = 0;
 let bouncing = false;
 
 let spots = [];
-for (let i = 0; i < 8; i++) {
-  spots.push({
-    x: Math.random() * 60 - 30,
-    y: Math.random() * 60 - 30,
-    r: Math.random() * 10 + 5
-  });
+function generateSpots() {
+  spots = [];
+  for (let i = 0; i < 12; i++) {
+    spots.push({
+      x: Math.random() * 110 - 55,
+      y: Math.random() * 70 - 35,
+      r: Math.random() * 4 + 2,
+      appearTime: 0.2 + Math.random() * 0.5
+    });
+  }
 }
+generateSpots();
 
 let batter = Math.random();
 let water = Math.random();
@@ -130,10 +281,15 @@ function startGame() {
  flipProgress = 0;
  flippedSide = false;
  scored = false;
+ 
+ generateSpots();
 
  document.getElementById("startBtn").style.display = "none";
  document.getElementById("flipBtn").style.display = "inline-block";
  document.getElementById("retryBtn").style.display = "none";
+
+  document.getElementById("sizzleSound").currentTime = 0;
+  document.getElementById("sizzleSound").play();
 
   loop();
 }
@@ -153,6 +309,7 @@ function resetGame() {
   heat = 0.5 + Math.random();
 
   document.getElementById("result").innerText = "";
+  document.body.classList.remove("perfect");
 
   document.getElementById("startBtn").style.display = "none";
 
@@ -161,6 +318,9 @@ function resetGame() {
   flipBtn.style.display="inline-block";
 
   document.getElementById("retryBtn").style.display = "none";
+
+  document.getElementById("result-container").style.visibility = "hidden";
+  document.getElementById("score-bar-fill").style.width = "0%";
   
   startGame();
  }
@@ -195,7 +355,7 @@ function getColor(progress) {
 }
 
 function drawPancake(color, scaleY = 1) {
-  let lift = flipping ? Math.sin(flipProgress * Math.PI) * 60 : 0;
+  let lift = flipping ? Math.sin(flipProgress * Math.PI) * 75 : 0;
   let wobbleX = 0;
   let tilt = 0;
 
@@ -312,6 +472,22 @@ function drawPancake(color, scaleY = 1) {
   ctx.fillStyle = color; 
   ctx.fill();
 
+  //기포
+  if (!flippedSide) {
+    ctx.save();
+    ctx.globalCompositeOperation = "multiply";
+    spots.forEach(spot => {
+      if (time > spot.appearTime) {
+        let spotAlpha = Math.min(0.4, (time - spot.appearTime) * 0.8);
+        ctx.fillStyle = `rgba(139, 90, 43, ${spotAlpha})`;
+        ctx.beginPath();
+        ctx.ellipse(spot.x, spot.y, spot.r, spot.r * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    ctx.restore();
+  }
+
   // 중앙 하이라이트
   ctx.save();
   ctx.globalCompositeOperation = "overlay";
@@ -337,7 +513,12 @@ function loop() {
   let color = flippedSide ? back : front;
 
   if (!flipping) {
-    time += 0.01 * heat;
+    time += 0.008 * heat;
+
+    if (time > 1.3 && !flipped) {
+      flipped = true;
+      time = 1.3;
+    }
   }
 
   if (flipping) {
@@ -376,6 +557,8 @@ function loop() {
   }
 
   if (flipped && !flipping && !scored) {
+    document.getElementById("sizzleSound").pause();
+
     scored = true;
 
     let outside = time;
@@ -390,25 +573,65 @@ function loop() {
     score = Math.round(score * 10) / 10;
 
     let text = "";
-    if (score > 95) {text = "👑 신의 팬케이크";
-      document.getElementById("perfectSound").currentTime=0;
+    let gradeClass = "";
+    let barColor = "#fff";
+
+    if (score > 95) {
+      text = "👑 GODLY PANCAKE";
+      gradeClass = "grade-godly";
+      barColor = "#ffd700";
+      document.body.classList.add("perfect"); 
+      document.getElementById("perfectSound").currentTime = 0;
       document.getElementById("perfectSound").play();
     }
-    else if (score > 85) {text = "🔥 거의 완벽!";}
-    else if (score > 70) {text = "😋 맛있다";}
-    else if (score > 50) {text = "🙂 먹을만함";}
-    else if (score > 30) {text = "😐 애매함";}
-    else {text = "💀 실패";}
+    else if (score > 85) { 
+      text = "🔥 Almost Perfect!"; 
+      gradeClass = "grade-perfect";
+      barColor = "#ff9f1a";
+    }
+    else if (score > 70) { 
+      text = "😋 Delicious"; 
+      gradeClass = "grade-delicious";
+      barColor = "#4caf50";
+    }
+    else if (score > 50) { 
+      text = "🙂 Not Bad"; 
+      gradeClass = "grade-good";
+      barColor = "#2196f3";
+    }
+    else if (score > 30) { 
+      text = "😐 Meh"; 
+      gradeClass = "grade-meh";
+      barColor = "#9e9e9e";
+    }
+    else { 
+      text = "💀 Burnt"; 
+      gradeClass = "grade-burnt";
+      barColor = "#721c24";
+    }
 
-    document.getElementById("result").innerText =
-      `점수: ${score} / 100\n${text}`;
+    const resContainer = document.getElementById("result-container");
+    const resRating = document.getElementById("result-rating");
+    const resScore = document.getElementById("result-score");
+    const barFill = document.getElementById("score-bar-fill");
+
+    resRating.className = gradeClass;
+    resRating.innerText = text;
+    resScore.innerText = `Score: ${score} / 100`;
+    
+    resContainer.style.visibility = "visible";
+
+    setTimeout(() => {
+      barFill.style.width = `${score}%`;
+      barFill.style.background = barColor;
+    }, 50);
 
     if (score > bestScore) {
       bestScore = score;
       localStorage.setItem("pancakeBest", bestScore);
 
       document.getElementById("bestScore").innerText =
-        `최고 점수: ${bestScore.toFixed(1)} 🔥`;
+        `Best score: ${bestScore.toFixed(1)} 🔥`;
     }
 
     gameState = "result";
@@ -421,6 +644,10 @@ function loop() {
 function flip() {
   if (gameState !== "playing") return;
   if (flipped) return;
+
+  if (navigator.vibrate) {
+    navigator.vibrate(10); 
+  }
 
   flipped = true;
   flipping = true;
