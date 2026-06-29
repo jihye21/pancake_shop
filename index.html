@@ -3,8 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🥞 pancake</title>
-
+<title>🥞 Pancake Game | 팬케이크 굽기 게임</title>
+<meta name="description" content="팬케이크를 굽고 뒤집는 간단한 브라우저 게임. Pancake cooking game you can play online.">
+<meta property="og:title" content="Pancake Game">
+<meta property="og:description" content="Flip pancakes and get a high score!">
+<meta property="og:url" content="https://jihye21.github.io/pancake_shop/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://jihye21.github.io/pancake_shop/pancake_preview.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Pancake Game",
+  "description": "A simple pancake cooking browser game where you flip pancakes.",
+  "url": "https://jihye21.github.io/pancake_shop/",
+  "genre": "Cooking Game",
+  "applicationCategory": "Game"
+}
+</script>
 <style>
 body {
   background: radial-gradient(circle at center, #2c2520 0%, #1a1512 100%);
@@ -206,8 +222,29 @@ canvas {
 <body>
 
 <main class="game-container">
-  <h1>🥞 pancake</h1>
-  <p>Perfect timing only.</p>
+  <h1>🥞 Pancake Game | 팬케이크 굽기 게임</h1>
+
+  <details open>
+    <summary>About Pancake Game</summary>
+
+    <h2>Pancake Cooking Game</h2>
+    <p>
+      This is a simple pancake cooking game where you flip pancakes at the right time.
+      It is a free browser game that anyone can play online.
+    </p>
+
+    <h3>How to Play</h3>
+    <ul>
+      <li>Wait until the pancake is ready</li>
+      <li>Flip it at the right timing</li>
+      <li>Score points and avoid burning</li>
+    </ul>
+
+    <h3>Keywords</h3>
+    <p>
+      pancake game, cooking game, browser game, flip game
+    </p>
+  </details>
 
   <audio id="sizzleSound" src="https://actions.google.com/sounds/v1/substances/sizzling_pan.ogg" loop></audio>
   <audio id="perfectSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
